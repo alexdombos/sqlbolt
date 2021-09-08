@@ -1,0 +1,17 @@
+source create_database_and_table.mysql;
+\! echo 'Find all the Toy Story movies'
+SELECT title, director FROM movies
+WHERE title LIKE "Toy Story%";
+\! echo 'Find all the movies directed by John Lasseter'
+SELECT title, director FROM movies
+WHERE director = "John Lasseter";
+SELECT title, director FROM movies
+WHERE director IN ("John Lasseter");
+\! echo 'Find all the movies (and director) not directed by John Lasseter'
+SELECT title, director FROM movies
+WHERE director != "John Lasseter";
+SELECT title, director FROM movies
+WHERE director NOT IN ("John Lasseter");
+\! echo 'Find all the WALL-* movies'
+SELECT * FROM movies
+WHERE title LIKE "WALL-_";

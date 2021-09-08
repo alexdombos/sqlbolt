@@ -1,0 +1,14 @@
+source create_database_and_table.mysql;
+\! echo 'List all movies and their combined sales in millions of dollars'
+SELECT title, (domestic_sales + international_sales) / 1000000 AS combined_sales
+FROM movies
+INNER JOIN box_office
+ON movies.id = box_office.movie_id;
+\! echo 'List all movies and their ratings in percent'
+SELECT title, rating * 10 AS percent_rating
+FROM movies
+INNER JOIN box_office
+ON movies.id = box_office.movie_id;
+\! echo 'List all movies that were released on even number years'
+SELECT title, year FROM movies
+WHERE year % 2 = 0;

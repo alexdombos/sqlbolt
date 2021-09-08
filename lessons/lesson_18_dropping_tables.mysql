@@ -1,0 +1,6 @@
+source create_database_and_table.mysql;
+\! echo "We've sadly reached the end of our lessons, lets clean up by removing the Movies table"
+DROP TABLE IF EXISTS movies;
+\! echo 'And drop the BoxOffice table as well'
+DROP TABLE IF EXISTS box_office;
+SHOW TABLES;

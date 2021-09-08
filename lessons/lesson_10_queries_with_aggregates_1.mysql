@@ -1,0 +1,13 @@
+source create_database_and_table.mysql;
+\! echo 'Find the longest time that an employee has been at the studio'
+SELECT MAX(years_employed) AS max_years_employed
+FROM employees;
+\! echo 'For each role, find the average number of years employed by employees in that role'
+SELECT role, AVG(years_employed) AS average_years_employed
+FROM employees
+GROUP BY role;
+\! echo 'Find the total number of employee years worked in each building'
+SELECT building, SUM(years_employed) AS total_number_of_employee_years
+FROM employees
+WHERE building IS NOT NULL
+GROUP BY building;

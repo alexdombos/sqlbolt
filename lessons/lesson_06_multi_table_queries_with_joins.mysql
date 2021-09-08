@@ -1,0 +1,15 @@
+source create_database_and_table.mysql;
+\! echo 'Find the domestic and international sales for each movie'
+SELECT title, domestic_sales, international_sales FROM movies
+INNER JOIN box_office
+ON movies.id = box_office.movie_id;
+\! echo 'Show the sales numbers for each movie that did better internationally rather than domestically'
+SELECT title, domestic_sales, international_sales FROM movies
+INNER JOIN box_office
+ON movies.id = box_office.movie_id
+WHERE domestic_sales < international_sales;
+\! echo 'List all the movies by their ratings in descending order'
+SELECT title, rating FROM movies
+INNER JOIN box_office
+ON movies.id = box_office.movie_id
+ORDER BY rating DESC;

@@ -1,0 +1,144 @@
+
+DROP DATABASE IF EXISTS sqlbolt;
+CREATE DATABASE sqlbolt;
+SHOW DATABASES;
+USE sqlbolt;
+
+CREATE TABLE by_hand (
+       id		INT UNSIGNED NOT NULL AUTO_INCREMENT,
+       title	     	VARCHAR(150) NOT NULL,
+       director	     	VARCHAR(150) NOT NULL,
+       year		INT UNSIGNED NOT NULL,
+       length_minutes	INT UNSIGNED NOT NULL,
+       PRIMARY KEY	(id)
+);
+
+SHOW TABLES;
+DESCRIBE by_hand;
+
+# Dataset from https://sqlbolt.com/
+INSERT INTO by_hand (title, director, year, length_minutes) VALUES
+('Toy Story',		'John Lasseter',	1995,	81),
+('A Bug\'s Life',	'John Lasseter',	1998,	95),
+('Toy Story 2',		'John Lasseter',	1999,	93),
+('Monsters, Inc.',	'Pete Docter',		2001,	92),
+('Finding Nemo',	'Andrew Stanton',	2003,	107),
+('The Incredibles',	'Brad Bird',		2004,	116),
+('Cars',		'John Lasseter',	2006,	117),
+('Ratatouille',		'Brad Bird',		2007,	115),
+('WALL-E',		'Andrew Stanton',	2008,	104),
+('Up',			'Pete Docter',		2009,	101),
+('Toy Story 3',		'Lee Unkrich',		2010,	103),
+('Cars 2',		'John Lasseter',	2011,	120),
+('Brave',		'Brenda Chapman',	2012,	102),
+('Monsters University',	'Dan Scanlon',		2013,	110);
+
+SELECT * FROM by_hand;
+
+# https://stackoverflow.com/questions/3280006/duplicating-a-mysql-table-indices-and-data
+CREATE TABLE from_file LIKE by_hand;
+SHOW TABLES;
+DESCRIBE from_file;
+SELECT * FROM from_file;
+
+# https://stackoverflow.com/questions/59993844/error-loading-local-data-is-disabled-this-must-be-enabled-on-both-the-client
+SET GLOBAL local_infile=1;
+SHOW GLOBAL VARIABLES LIKE 'local_infile';
+
+LOAD DATA LOCAL INFILE '../data/movies.txt'
+INTO TABLE from_file
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n';
+
+SELECT * FROM from_file;
+
+# Ensure the two tables are identical
+# https://stackoverflow.com/questions/2129717/how-to-verify-if-two-tables-have-exactly-the-same-data
+
+CHECKSUM TABLE by_hand, from_file;
+
+SELECT * FROM by_hand
+UNION
+SELECT * FROM from_file;
+
+# Create table with appropriate name to be used with the exercises
+CREATE TABLE movies LIKE by_hand;
+INSERT INTO movies SELECT * FROM by_hand;
+
+SHOW TABLES;
+CHECKSUM TABLE by_hand, from_file, movies;
+
+CREATE TABLE north_american_cities (
+       city		VARCHAR(150) NOT NULL,
+       country		VARCHAR(150) NOT NULL,
+       population	INT UNSIGNED NOT NULL,
+       latitude		DECIMAL(9,6) NOT NULL,
+       longitude	DECIMAL(9,6) NOT NULL
+);
+
+LOAD DATA LOCAL INFILE '../data/north_american_cities.txt'
+INTO TABLE north_american_cities
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n';
+
+# https://stackoverflow.com/questions/5351628/how-can-i-add-a-new-column-which-counts-the-number-of-rows-as-serial-number
+ALTER TABLE north_american_cities ADD id INT UNSIGNED NOT NULL;
+SELECT @n:=0;
+UPDATE north_american_cities SET id = @n := @n + 1;
+# https://stackoverflow.com/questions/6805426/how-to-move-columns-in-a-mysql-table
+ALTER TABLE north_american_cities
+CHANGE id id INT UNSIGNED NOT NULL FIRST;
+
+SHOW TABLES;
+DESCRIBE north_american_cities;
+SELECT * FROM north_american_cities;
+
+CREATE TABLE box_office (
+       movie_id			INT UNSIGNED NOT NULL,
+       rating			DECIMAL(2,1) NOT NULL,
+       domestic_sales		INT UNSIGNED NOT NULL,
+       international_sales	INT UNSIGNED NOT NULL
+);
+
+LOAD DATA LOCAL INFILE '../data/box_office.txt'
+INTO TABLE box_office
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n';
+
+SHOW TABLES;
+DESCRIBE box_office;
+SELECT * FROM box_office;
+
+CREATE TABLE buildings (
+       building_name  VARCHAR(150) NOT NULL,
+       capacity       INT UNSIGNED NOT NULL
+);
+
+LOAD DATA LOCAL INFILE '../data/buildings.txt'
+INTO TABLE buildings
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n';
+
+SHOW TABLES;
+DESCRIBE buildings;
+SELECT * FROM buildings;
+
+CREATE TABLE employees (
+       role  	       VARCHAR(150) NOT NULL,
+       name	       VARCHAR(150) NOT NULL,
+       building	       VARCHAR(150) NULL,
+       years_employed  INT UNSIGNED NOT NULL
+);
+
+LOAD DATA LOCAL INFILE '../data/employees.txt'
+INTO TABLE employees
+FIELDS TERMINATED BY '\t'
+LINES TERMINATED BY '\n';
+
+# https://stackoverflow.com/questions/3238319/how-do-i-change-all-empty-strings-to-null-in-a-table/3238367
+# https://stackoverflow.com/questions/2675323/mysql-load-null-values-from-csv-data
+UPDATE employees SET building = NULL WHERE building = '';
+
+SHOW TABLES;
+DESCRIBE employees;
+SELECT * FROM employees;

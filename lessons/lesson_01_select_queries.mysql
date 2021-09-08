@@ -1,0 +1,11 @@
+source create_database_and_table.mysql;
+\! echo 'Find the title of each film'
+SELECT title FROM movies;
+\! echo 'Find the director of each film'
+SELECT director FROM movies;
+\! echo 'Find the title and director of each film'
+SELECT title, director FROM movies;
+\! echo 'Find the title and year of each film'
+SELECT title, year FROM movies;
+\! echo 'Find all the information about each film'
+SELECT * FROM movies;

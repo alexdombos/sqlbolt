@@ -1,0 +1,11 @@
+source create_database_and_table.mysql;
+\! echo 'Find the number of movies each director has directed'
+SELECT director, COUNT(director) AS number_of_movies
+FROM movies
+GROUP BY director;
+\! echo 'Find the total domestic and international sales that can be attributed to each director'
+SELECT director, SUM(domestic_sales + international_sales) AS total_sales
+FROM movies
+INNER JOIN box_office
+ON movies.id = box_office.movie_id
+GROUP BY director;
